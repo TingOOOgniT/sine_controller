@@ -72,7 +72,7 @@ class sine_switch (EventMixin):
     type = packet.type
     length = packet.length
     flag = packet.flag
-    #print "DJ---/pox/sine/libsine.py _handle_SINEIn!TLF:", type, length, flag
+    print "DJ---/pox/sine/libsine.py _handle_SINEIn!TLF:", type, length, flag
     
     if type == sine.TYPE_SER_REG: # sercice registration/update
       nid = packet.nid
