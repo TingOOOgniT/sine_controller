@@ -7,6 +7,7 @@ from pox.core import core
 import pox
 log = core.getLogger()
 
+from pox.sine import libmysql #DJ++ 20140114 
 from pox.sine import * #DJ++ 20131225
 from pox.lib.packet.packet_sine import sine #some constant defined in class sine
 from pox.lib.packet.ipv4 import ipv4
