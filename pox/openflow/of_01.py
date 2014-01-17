@@ -187,10 +187,6 @@ def handle_PACKET_IN (con, msg): #A
   #if e is None or e.halt != True:
     #print "DJ---/pox/openflow/of_01.py handle_PACKET_IN!--------------------con.raiseEventNoErrors"
     #con.raiseEventNoErrors(PacketIn, con, msg)
-  e = con.ofnexus.raiseEventNoErrors(Collect_serInfo, con, msg)
-  if e is None or e.halt != True:
-    print "DJ---/pox/openflow/of_01.py handle_PACKET_IN!--------------------con.raiseEventNoErrors COLLECT"
-    con.raiseEventNoErrors(Collect_serInfo, con, msg)
   e = con.ofnexus.raiseEventNoErrors(SINEIn, con, msg)
   if e is None or e.halt != True:
     #print "DJ---/pox/openflow/of_01.py handle_PACKET_IN!--------------------con.raiseEventNoErrors SINE"

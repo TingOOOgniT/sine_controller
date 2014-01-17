@@ -281,6 +281,10 @@ class POXCore (EventMixin):
     log.info("Going down...")
     import gc
     gc.collect()
+    #DJ++ START 20140115
+    from pox.sine.libmysql import dbop
+    dbop.closedb()
+    #DJ++ END 20140115
     self.raiseEvent(GoingDownEvent())
     self.callLater(self.scheduler.quit)
     for i in range(50):

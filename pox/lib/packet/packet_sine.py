@@ -13,12 +13,22 @@ from packet_base import packet_base
 class sine(packet_base):
     "SINE packet struct"
     MIN_LEN = 4 #length of (type,length,flag)
+    NID_LEN = 16
+    SID_LEN = 20
 
     TYPE_SER_REG = 1  #sercice registration/update
     TYPE_CAP_REG = 2  #capability registration/update
     TYPE_SER_REQ = 3  #service request
     TYPE_SER_DAT = 4  #service data
     TYPE_CON_MSG = 5  #control message
+
+    TYPE_TLV_CPU  = 1
+    TYPE_TLV_MEM  = 2
+    TYPE_TLV_DISK = 3
+    TYPE_TLV_LINK = 4
+    TYPE_TLV_IP   = 5
+    TYPE_TLV_MAC  = 6
+    TYPE_TLV_PORT = 7
 
     #min length dictionary of all the message types
     MIN_LEN_DICT = {
@@ -49,25 +59,30 @@ class sine(packet_base):
         self.sid    = None
         self.srcnid = None
         self.dstnid = None
-        #self.sbd    = None 
-        #self.nbd    = None
+        self.sbd    = None 
+        self.nbd    = None
         self.nid = None
         self.swnid = None
-        #self.port = None # the port of the nearby router connected with server
-        #self.ip = None
-        #self.mac = None
+        self.port = None # the port of the nearby router connected with server
+        self.ip = None
+        self.mac = None
 
         self.next   = b''
 
         if raw is not None:
             self.parse(raw)
 
-#        self._init(kw)
+    def parse_tlv(self, tlv):
+        (tlv_t, tlv_l) = struct.unpack('!BB', tlv)
+        #get value
+        tlv_v = tlv[2:tlv_l]
+        next = tlv[tlv_l:]
+        return (tlv_t, tlv_l, tlv_v, next)
 
 #DJ++ 20121203
     def parse(self, raw):
         assert isinstance(raw, bytes)
-        self.raw = raw
+        #self.raw = raw 20140116 by dj
         dlen = len(raw)
         if dlen < sine.MIN_LEN:
             self.msg('warning SINE packet data too short to parse header: data len %u' % (dlen,))
@@ -80,16 +95,19 @@ class sine(packet_base):
         # At this point, sine is parsed
         # each type of sine packets should then be parsed respectively
         self.parsed = True
-
         self.next = raw[self.MIN_LEN:dlen]
 
         if self.type == sine.TYPE_SER_REG: # sercice registration/update
             #DJ++ 20131218
             #due to the length of SID and NID, we get data in the format of string
-            (self.sid,self.nid) = struct.unpack('!20s16s',self.next)
-            print "DJ---/pox/lib/packet/packet_sine.py parse sine ", self.type, self.length, self.flag, self.sid, self.nid
+            (self.sid, self.nid) = struct.unpack('!20s16s',self.next)
+            print "DJ---/pox/lib/packet/packet_sine.py parse sine ", \
+                self.type, self.length, self.flag, self.sid, self.nid
+
         elif self.type == sine.TYPE_CAP_REG:
-            pass #TODO
+            self.nid = struct.unpack('!16s',self.next)
+            self.nbd = raw[self.MIN_LEN+NID_LEN:dlen]
+                
         elif self.type == sine.TYPE_SER_REQ:
             pass #TODO
         elif self.type == sine.TYPE_SER_DAT:

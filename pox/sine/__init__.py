@@ -1,17 +1,11 @@
 # Copyright 2013 Jie Ding
-
+#pox/sine sine __init__.py
 '''
 In this file, you can define your own sine class and sine event source for further deployment.
 '''
 
-# Import some POX stuff
 from pox.core import core                     # Main POX object
-#import pox.openflow.libopenflow_01 as of      # OpenFlow 1.0 library
-#import pox.lib.packet as pkt                  # Packet parsing/construction
-#from pox.lib.addresses import EthAddr, IPAddr # Address types
-#import pox.lib.util as poxutil                # Various util functions
 from pox.lib.revent import *              # Event library
-#import pox.lib.recoco as recoco               # Multitasking library
 
 # Create a logger for this component
 log = core.getLogger()
@@ -22,7 +16,7 @@ log = core.getLogger()
 #DJ++ START 20131223
 class Collect_serInfo(Event):
   def __init__(self, connection, inport, sinein_event):
-    print "DJ---/pox/sine/__init__.py Event Colect_serInfo initiates!"
+    print "DJ---/pox/sine/__init__.py Event Collect_serInfo initiates!"
     Event.__init__(self)
     self.connection = connection
     self.dpid = connection.dpid
@@ -32,10 +26,24 @@ class Collect_serInfo(Event):
     self.sid = self.sine_packet.sid
     self.nid = self.sine_packet.nid
 
+class Collect_capInfo(Event):
+  def __init__(self, connection, inport, sinein_event):
+    print "DJ---/pox/sine/__init__.py Event Collect_capInfo initiates!"
+    Event.__init__(self)
+    self.connection = connection
+    self.dpid = connection.dpid
+    self.inport = inport
+    self.sine_packet = sinein_event.parsed
+    self.connection = sinein_event.connection
+    self.flag = self.sine_packet.flag
+    self.nid = self.sine_packet.nid
+    self.nbd = self.sine_packet.nbd
+
 class sine_event(EventMixin):
 
   _eventMixin_events = set([
     Collect_serInfo,
+    Collect_capInfo,
   ])
 
   def __init__ (self):

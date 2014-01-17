@@ -54,9 +54,7 @@ class sine_switch (EventMixin):
 
   #DJ++ START 20131209
   def _handle_SINEIn (self, event):
-    #print "DJ---/pox/sine/libsine.py Entering _handle_SINEIn!" ,self
     print "DJ---/pox/sine/libsine.py Entering _handle_SINEIn!" ,event
-    #print "DJ---/pox/sine/libsine.py Entering _handle_SINEIn!" ,core.openflow.connections
     
     #DJ++ START 20131218
     dpid = event.connection.dpid
@@ -73,19 +71,16 @@ class sine_switch (EventMixin):
     type = packet.type
     length = packet.length
     flag = packet.flag
-    print "DJ---/pox/sine/libsine.py _handle_SINEIn!TLF:", type, length, flag
     
     if type == sine.TYPE_SER_REG: # sercice registration/update
       nid = packet.nid
       sid = packet.sid
-      print "DJ---/pox/sine/libsine.py _handle_SINEIn! ", repr(sid), repr(nid)
-      #e = connection.ofnexus.raiseEventNoErrors(Collect_serInfo, connection, inport, event)
-      #if e is None or e.halt != True:#false
-        #connection.raiseEventNoErrors(Collect_serInfo, connection, inport, event)
+      #maintain service information
       core.sine_event.raiseEventNoErrors(Collect_serInfo, connection, inport, event)
 
     elif type == sine.TYPE_CAP_REG:
-      pass #TODO
+      core.sine_event.raiseEventNoErrors(Collect_capInfo, connection, inport, event)
+
     elif type == sine.TYPE_SER_REQ:
       pass #TODO
     elif type == sine.TYPE_SER_DAT:
